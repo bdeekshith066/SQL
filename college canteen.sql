@@ -92,4 +92,3 @@ INSERT INTO menu_items (item_id, category_id, item_name, price) VALUES
 INSERT INTO menu_items (item_id, category_id, item_name, price) VALUES
 (23, 5, 'Veg Fried Rice', 60.00),
 (24, 5, 'Egg Fried Rice', 70.00);
-
