@@ -1,3 +1,4 @@
+Solutions to Leetcode Crack SQL Interview in 50 Qs
 1
   a. select product_id
     from products
@@ -22,3 +23,12 @@
 
 
 2
+
+  a. select EmployeeUNI.unique_id , Employees.name
+    from Employees
+    left join EmployeeUni
+    on Employees.id = EmployeeUni.id;
+
+  b.select Product.product_name, Sales.year,Sales.price
+    from Sales,Product
+    where sales.product_id=product.product_id;
