@@ -2,6 +2,7 @@ SOLUTIONS to LEETCODE Crack SQL INTERVIEW in 50 Qs
 
 
 1 - Select
+
   A.1757. Recyclable and Low Fat Products
     select product_id
     from products
@@ -30,20 +31,109 @@ SOLUTIONS to LEETCODE Crack SQL INTERVIEW in 50 Qs
 
                          -X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-
 
-2
+2 - Basic Joins
 
-  a. select EmployeeUNI.unique_id , Employees.name
+  A.select EmployeeUNI.unique_id , Employees.name
     from Employees
     left join EmployeeUni
     on Employees.id = EmployeeUni.id;
 
-  b.select Product.product_name, Sales.year,Sales.price
+  B.select Product.product_name, Sales.year,Sales.price
     from Sales,Product
     where sales.product_id=product.product_id;
 
 
                           -X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-
 
+3 - Basic Aggregate Functions
+
+  A.620. Not Boring Movies
+    select *
+    from cinema
+    where id%2 !=0 and description != 'boring'
+    order by rating desc;
+
+  B.1251. Average Selling Price
+
+  C.1075. Project Employees I
+    select project_id, round(avg(experience_years),2) as average_years
+    from project,employee
+    where project.employee_id=employee.employee_id
+    group by project_id;
+
+  D.1633. Percentage of Users Attended a Contest
+
+
+  E.1211. Queries Quality and Percentage
+    SELECT query_name, ROUND(SUM(rating / position) / COUNT(rating), 2) AS quality, ROUND((SUM(CASE WHEN rating < 3 THEN 1 ELSE 0 END) / COUNT(rating)) * 100, 2) AS poor_query_percentage
+    FROM queries
+    where query_name is not null
+    GROUP BY query_name;
+
+  F.1193. Monthly Transactions I
+
+
+  G.1174. Immediate Food Delivery II
+    SELECT ROUND( (SUM(CASE WHEN order_date = customer_pref_delivery_date THEN 1 ELSE 0 END) / COUNT(DISTINCT customer_id)) * 100,2) AS immediate_percentage
+    FROM Delivery
+    WHERE (customer_id, order_date) IN (
+    SELECT customer_id, MIN(order_date) AS first_order_date
+    FROM Delivery
+    GROUP BY customer_id
+    );
+
+  H.550. Game Play Analysis IV
+    
+
+                        -X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-
+4 - Sorting and Grouping
+
+  A.2356. Number of Unique Subjects Taught by Each Teacher
+    select teacher_id, count(distinct subject_id) as cnt
+    from teacher
+    group by teacher_id;
+
+  B.1141. User Activity for the Past 30 Days I
+    SELECT activity_date AS day, COUNT(DISTINCT user_id) AS active_users
+    FROM activity
+    WHERE activity_date >= '2019-06-28' AND activity_date <= '2019-07-27'
+    GROUP BY activity_date
+    HAVING COUNT(DISTINCT user_id) > 0;
+
+  C.1070. Product Sales Analysis III
+    SELECT product_id, MIN(year) AS first_year, quantity, price
+    FROM Sales
+    WHERE(product_id, year) IN ( SELECT product_id, MIN(year) AS first_year
+    FROM Sales
+    GROUP BY product_id
+    )
+    GROUP BY product_id, year, quantity, price;
+
+  D.596. Classes More Than 5 Students
+    select class
+    from courses
+    group  by class
+    HAVING COUNT(class) >= 5;
+
+  E.1729. Find Followers Count
+    select user_id,count(follower_id) as followers_count
+    from followers
+    group by user_id
+    order by user_id asc;
+
+  F.619. Biggest Single Number
+    SELECT MAX(num) AS num
+    FROM
+    (
+        SELECT num
+        FROM MyNumbers
+        GROUP BY num
+         HAVING COUNT(num) = 1
+    )
+    AS single_numbers;
+
+
+                             -X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-
 
 
 7
