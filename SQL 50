@@ -161,6 +161,16 @@ SOLUTIONS to LEETCODE Crack SQL INTERVIEW in 50 Qs
 
                              -X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-
 
+5
+  g.185. Department Top Three Salaries
+    SELECT department.name AS Department, employee.name AS Employee,employee.salary
+    FROM employee
+    left JOIN department
+    ON employee.departmentId = department.id
+    WHERE (SELECT COUNT(DISTINCT salary) FROM employee e WHERE e.departmentId = employee.departmentId AND e.salary >= employee.salary) <= 3
+    ORDER BY employee.salary DESC;
+
+
 
 7
   a.1667.Fix Names in a Table
