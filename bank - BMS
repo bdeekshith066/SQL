@@ -1,0 +1,123 @@
+use mysql;
+create database bank;
+use bank;
+
+create table branch(
+branchname char(50),
+branchcity char(50),
+Assets int,
+primary key(Branchname));
+
+create table Bankaccount(
+accno int,
+Branchname char(50),
+balance int,
+primary key(accno),
+foreign key(branchname) references branch(branchname));
+
+create table Bankcustomer(
+customername char(50),
+customerstreet char(50),
+city char(20),
+primary key(customername));
+
+create table depositer(
+customername char(50),
+accno int,
+foreign key (customername) references Bankcustomer(customername),
+foreign key(accno) references Bankaccount(accno));
+
+create table loan(
+loannumber int,
+amount int,
+Branchname char(50),
+primary key (loannumber),
+foreign key(Branchname) references branch(branchname));
+
+create table borrower(
+customername char(50),
+loannumber int,
+foreign key(customername) references Bankcustomer(customername),
+foreign key(loannumber) references loan(loannumber));
+
+insert into branch(branchname,branchcity,assets)
+values
+("SBI_Chamrajpet","Bangalore",50000),
+("SBI_ResidencyRoad","Bangalore",10000),
+("SBI_ShivajiRoad","Bombay",20000),
+("SBI_ParlimentRoad","Delhi",10000),
+("SBI_Jantarmantar","Delhi",20000);
+
+insert into bankaccount values(1,'SBI_CHAMRAJPET',2000);
+insert into bankaccount values(2,'SBI_RESIDENCYROAD',5000);
+insert into bankaccount values(3,'SBI_SHIVAJIROAD',6000);
+insert into bankaccount values(4,'SBI_PARLIMENTROAD',9000);
+insert into bankaccount values(5,'SBI_JANTARMANTAR',8000);
+
+insert into bankcustomer values('AVINASH','BULL_TEMPLE_ROAD','BANGALORE');
+insert into bankcustomer values('DINESH','BANNERGATTA_ROAD','BANGALORE');
+insert into bankcustomer values('MOHAN','NATIONAL_COLLEGE_ROAD','BANGALORE');
+insert into bankcustomer values('NIKIL','AKBAR_ROAD','DELHI');
+insert into bankcustomer values('RAVI','PRITHVIRAJ_ROAD','DELHI');
+
+insert into depositer values('AVINASH',1);
+insert into depositer values('DINESH',2);
+insert into depositer values('NIKIL',4);
+insert into depositer values('AVINASH',3);
+insert into depositer values('NIKIL',5);
+
+insert into loan values(1,1000,'SBI_CHAMRAJPET');
+insert into loan values(2,2000,'SBI_RESIDENCYROAD');
+insert into loan values(3,3000,'SBI_SHIVAJIROAD');
+insert into loan values(4,4000,'SBI_PARLIMENTROAD');
+insert into loan values(5,5000,'SBI_JANTARMANTAR');
+
+INSERT INTO Borrower (customerName, loannumber) VALUES
+('Avinash', 1),
+('Dinesh', 2),
+('Mohan', 3),
+('Nikil', 4),
+('Ravi', 5);
+
+
+
+select * from loan;
+select * from depositer;
+
+SELECT DISTINCT d.customername
+FROM depositer d
+JOIN bankaccount ba ON d.accno = ba.accno
+JOIN branch b ON ba.Branchname = b.branchname
+WHERE b.branchcity = 'Delhi'
+GROUP BY d.customername
+HAVING COUNT(DISTINCT b.branchname) = (SELECT COUNT(*) FROM branch WHERE branchcity = 'Delhi');
+
+
+SELECT DISTINCT bc.customername
+FROM bankcustomer bc
+JOIN borrower b ON bc.customername = b.customername
+LEFT JOIN depositer d ON b.customername = d.customername AND b.loannumber = d.accno
+WHERE d.accno IS NULL;
+
+
+SELECT DISTINCT d.customername
+FROM depositer d
+JOIN bankaccount ba ON d.accno = ba.accno
+JOIN branch b ON ba.branchname = b.branchname
+JOIN loan l ON b.branchname = l.branchname AND d.accno = l.loannumber
+WHERE b.branchcity = 'Bangalore';
+
+SELECT DISTINCT b1.branchname
+FROM branch b1
+WHERE b1.assets > ALL (
+    SELECT b2.assets
+    FROM branch b2
+    WHERE b2.branchcity = 'Bangalore'
+);
+
+DELETE FROM Bankaccount
+WHERE Branchname IN (
+    SELECT branchname
+    FROM branch
+    WHERE branchcity = 'Bombay'
+);
