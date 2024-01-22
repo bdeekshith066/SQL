@@ -1,0 +1,122 @@
+CREATE DATABASE insurance66;
+USE insurance66;
+CREATE TABLE PERSON (
+    driver_id VARCHAR(10) PRIMARY KEY,
+    name VARCHAR(50),
+    address VARCHAR(100)
+);
+
+CREATE TABLE CAR (
+    reg_num VARCHAR(15) PRIMARY KEY,
+    model VARCHAR(50),
+    year INT
+);
+
+
+CREATE TABLE ACCIDENT (
+    report_num INT PRIMARY KEY,
+    accident_date DATE,
+    location VARCHAR(100)
+);
+
+
+CREATE TABLE OWNS (
+    driver_id VARCHAR(10),
+    reg_num VARCHAR(15),
+    PRIMARY KEY (driver_id, reg_num),
+    FOREIGN KEY (driver_id) REFERENCES PERSON(driver_id),
+    FOREIGN KEY (reg_num) REFERENCES CAR(reg_num)
+);
+
+CREATE TABLE PARTICIPATED (
+    driver_id VARCHAR(10),
+    reg_num VARCHAR(15),
+    report_num INT,
+    damage_amount INT,
+    PRIMARY KEY (driver_id, reg_num, report_num),
+    FOREIGN KEY (driver_id) REFERENCES PERSON(driver_id),
+    FOREIGN KEY (reg_num) REFERENCES CAR(reg_num),
+    FOREIGN KEY (report_num) REFERENCES ACCIDENT(report_num)
+);
+
+INSERT INTO PERSON VALUES ('A01', 'Richard', 'Srinivas Nagar');
+INSERT INTO PERSON VALUES ('A02', 'Pradeep', 'Rajaji Nagar');
+INSERT INTO PERSON VALUES ('A03', 'Smith', 'Ashok Nagar');
+INSERT INTO PERSON VALUES ('A04', 'Venu', 'N R Colony');
+INSERT INTO PERSON VALUES ('A05', 'John', 'Hanumanth Nagar');
+
+INSERT INTO CAR VALUES ('KA052250', 'Indica', 1990);
+INSERT INTO CAR VALUES ('KA031181', 'Lancer', 1957);
+INSERT INTO CAR VALUES ('KA095477', 'Toyota', 1998);
+INSERT INTO CAR VALUES ('KA053408', 'Honda', 2008);
+INSERT INTO CAR VALUES ('KA041702', 'Audi', 2005);
+
+INSERT INTO OWNS VALUES ('A01', 'KA052250');
+INSERT INTO OWNS VALUES ('A02', 'KA053408');
+INSERT INTO OWNS VALUES ('A03', 'KA031181');
+INSERT INTO OWNS VALUES ('A04', 'KA095477');
+INSERT INTO OWNS VALUES ('A05', 'KA041702');
+
+
+INSERT INTO PARTICIPATED VALUES ('A01', 'KA052250', 13, 10000);
+INSERT INTO PARTICIPATED VALUES ('A02', 'KA053408', 12, 50000);
+INSERT INTO PARTICIPATED VALUES ('A03', 'KA095477', 13, 25000);
+INSERT INTO PARTICIPATED VALUES ('A04', 'KA031181', 14, 3000);
+INSERT INTO PARTICIPATED VALUES ('A05', 'KA041702', 15, 5000);
+
+INSERT INTO ACCIDENT VALUES (11, '2003-01-01', 'Mysore Road');
+INSERT INTO ACCIDENT VALUES (12, '2004-02-02', 'South End Circle');
+INSERT INTO ACCIDENT VALUES (13, '2003-01-21', 'Bull Temple Road');
+INSERT INTO ACCIDENT VALUES (14, '2008-02-17', 'Mysore Road');
+INSERT INTO ACCIDENT VALUES (15, '2005-03-04', 'Kanakpura Road');
+
+select * from person;
+select * from participated;
+select * from owns;
+select * FROM car ORDER BY year;
+SELECT * FROM PARTICIPATED ORDER BY damage_amount DESC;
+SELECT AVG(damage_amount) AS average_damage FROM PARTICIPATED;
+
+DELETE FROM PARTICIPATED WHERE damage_amount < (SELECT AVG(damage_amount) FROM PARTICIPATED);
+
+SELECT * FROM ACCIDENT
+WHERE location = 'Mysore Road';
+
+
+SELECT * FROM PERSON
+WHERE name LIKE 'J%' AND address LIKE '%nagar%';
+
+SELECT driver_id, AVG(damage_amount) AS avg_damage_amount
+FROM PARTICIPATED
+GROUP BY driver_id
+HAVING avg_damage_amount > 20000;
+
+SELECT * FROM PARTICIPATED
+WHERE damage_amount BETWEEN 5000 AND 30000 AND report_num < 15;
+
+
+SELECT COUNT(DISTINCT O.driver_id) FROM OWNS O
+JOIN PARTICIPATED P ON O.driver_id = P.driver_id
+JOIN ACCIDENT A ON P.report_num = A.report_num
+WHERE YEAR(A.accident_date) = 2008;
+
+-- iv. List the Entire Participated Relation in Descending Order Of Damage Amount.
+SELECT * FROM PARTICIPATED 
+ORDER BY COALESCE(damage_amount, 0) DESC;
+
+SELECT * FROM PARTICIPATED ORDER BY damage_amount DESC;
+-- Find the Average Damage Amount
+SELECT AVG(damage_amount) AS average_damage FROM PARTICIPATED;
+
+-- v. Delete the Tuple Whose Damage Amount is below the Average Damage Amount.
+DELETE FROM PARTICIPATED WHERE damage_amount < (SELECT AVG(damage_amount) FROM PARTICIPATED);
+
+-- vi. List the Name Of Drivers Whose Damage is Greater than The Average Damage Amount.
+SELECT P.driver_id, name FROM PARTICIPATED P
+JOIN PERSON ON P.driver_id = PERSON.driver_id
+WHERE damage_amount > (SELECT AVG(damage_amount) FROM PARTICIPATED);
+
+-- vii. Find Maximum Damage Amount.
+SELECT MAX(damage_amount) AS max_damage FROM PARTICIPATED;
+
+
