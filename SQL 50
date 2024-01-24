@@ -29,7 +29,9 @@ SOLUTIONS to LEETCODE Crack SQL INTERVIEW in 50 Qs
     from tweets
     where length(content)>15;
 
+
                          -X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-
+
 
 2 - Basic Joins
 
@@ -59,17 +61,33 @@ SOLUTIONS to LEETCODE Crack SQL INTERVIEW in 50 Qs
     group by a1.machine_id
 
   f.577. Employee Bonus
+    SELECT name, bonus
+    FROM employee
+    LEFT JOIN bonus ON employee.empId = bonus.empId
+    WHERE bonus < 1000 OR bonus IS NULL;
 
   g.1280. Students and Examinations
+    SELECT s.student_id, s.student_name, sub.subject_name, COALESCE(COUNT(e.subject_name), 0) AS attended_exams
+    FROM Students s
+    CROSS JOIN Subjects sub
+    LEFT JOIN Examinations e ON s.student_id = e.student_id AND sub.subject_name = e.subject_name
+    GROUP BY s.student_id, sub.subject_name
+    ORDER BY s.student_id,sub.subject_name;
 
-  570. Managers with at Least 5 Direct Reports
 
-
-
-
+   h.570. Managers with at Least 5 Direct Reports
+    SELECT name
+    FROM Employee
+    WHERE id IN ( SELECT managerId
+    FROM Employee
+    WHERE managerId IS NOT NULL
+    GROUP BY managerId
+    HAVING COUNT(id) >= 5
+    );
 
 
                           -X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-
+
 
 3 - Basic Aggregate Functions
 
