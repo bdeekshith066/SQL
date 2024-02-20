@@ -1,0 +1,83 @@
+CREATE TABLE Course (
+    CourseNumber INT PRIMARY KEY,
+    Title VARCHAR(255),
+    EmployeeId INT,
+    ApprovedDate DATE,
+    Duration INT,
+    Class VARCHAR(50),
+    FOREIGN KEY (EmployeeId) REFERENCES Employee(EmployeeID)
+);
+
+CREATE TABLE CourseOffering (
+    CourseNumber INT,
+    Location VARCHAR(255),
+    StartDate DATE,
+    OfferingType VARCHAR(50),
+    PRIMARY KEY (CourseNumber, Location, StartDate),
+    FOREIGN KEY (CourseNumber) REFERENCES Course(CourseNumber)
+);
+
+CREATE TABLE Participant (
+    ParticipantID INT PRIMARY KEY,
+    Name VARCHAR(255),
+    Organization VARCHAR(255)
+);
+
+CREATE TABLE Enrollment (
+    EnrollmentID INT PRIMARY KEY,
+    ParticipantID INT,
+    CourseNumber INT,
+    Location VARCHAR(255),
+    StartDate DATE,
+    OfferingType VARCHAR(50),
+    FOREIGN KEY (ParticipantID) REFERENCES Participant(ParticipantID),
+    FOREIGN KEY (CourseNumber, Location, StartDate) REFERENCES CourseOffering(CourseNumber, Location, StartDate)
+);
+
+CREATE TABLE FeeStructure (
+    CourseNumber INT,
+    OfferingType VARCHAR(50),
+    StandardFee DECIMAL(10, 2),
+    SpecialFee DECIMAL(10, 2),
+    PRIMARY KEY (CourseNumber, OfferingType),
+    FOREIGN KEY (CourseNumber) REFERENCES Course(CourseNumber)
+);
+
+CREATE TABLE Employee(
+    EmployeeID INT PRIMARY KEY,
+    Name VARCHAR(255),
+    IsAuthorized BOOLEAN
+);
+
+CREATE TABLE Assignment (
+    AssignmentID INT PRIMARY KEY,
+    EmployeeID INT,
+    CourseNumber INT,
+    Location VARCHAR(255),
+    StartDate DATE,
+    OfferingType VARCHAR(255),
+    DaysSpent INT,
+    FOREIGN KEY (EmployeeID) REFERENCES Employee(EmployeeID),
+    FOREIGN KEY (CourseNumber, Location, StartDate) REFERENCES CourseOffering(CourseNumber, Location, StartDate)
+);
+
+CREATE TABLE Attendance (
+    CourseNumber INT,
+    ParticipantID INT,
+    SessionDate DATE,
+    IsPresent BOOLEAN,
+    FOREIGN KEY (CourseNumber, SessionDate) REFERENCES CourseOffering(CourseNumber, StartDate),
+    FOREIGN KEY (ParticipantID) REFERENCES Participant(ParticipantID)
+);
+
+CREATE TABLE Evaluation (
+    ParticipantID INT,
+    CourseNumber INT,
+    Location VARCHAR(255),
+    StartDate DATE,
+    Rating INT,
+    Feedback TEXT,
+    PRIMARY KEY (ParticipantID, CourseNumber, Location, StartDate),
+    FOREIGN KEY (ParticipantID) REFERENCES Participant(ParticipantID),
+    FOREIGN KEY (CourseNumber, Location, StartDate) REFERENCES CourseOffering(CourseNumber, Location, StartDate)
+);
