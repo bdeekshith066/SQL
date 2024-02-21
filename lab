@@ -1,3 +1,16 @@
+---SQL CODE
+
+CREATE  database BMSinstitute;
+use BMSinstitute;
+
+
+CREATE TABLE Employee(
+    EmployeeID INT PRIMARY KEY,
+    Name VARCHAR(255),
+    IsAuthorized BOOLEAN
+);
+
+
 CREATE TABLE Course (
     CourseNumber INT PRIMARY KEY,
     Title VARCHAR(255),
@@ -43,11 +56,6 @@ CREATE TABLE FeeStructure (
     FOREIGN KEY (CourseNumber) REFERENCES Course(CourseNumber)
 );
 
-CREATE TABLE Employee(
-    EmployeeID INT PRIMARY KEY,
-    Name VARCHAR(255),
-    IsAuthorized BOOLEAN
-);
 
 CREATE TABLE Assignment (
     AssignmentID INT PRIMARY KEY,
@@ -66,7 +74,7 @@ CREATE TABLE Attendance (
     ParticipantID INT,
     SessionDate DATE,
     IsPresent BOOLEAN,
-    FOREIGN KEY (CourseNumber, SessionDate) REFERENCES CourseOffering(CourseNumber, StartDate),
+    FOREIGN KEY (CourseNumber) REFERENCES CourseOffering(CourseNumber),
     FOREIGN KEY (ParticipantID) REFERENCES Participant(ParticipantID)
 );
 
@@ -81,3 +89,169 @@ CREATE TABLE Evaluation (
     FOREIGN KEY (ParticipantID) REFERENCES Participant(ParticipantID),
     FOREIGN KEY (CourseNumber, Location, StartDate) REFERENCES CourseOffering(CourseNumber, Location, StartDate)
 );
+
+INSERTING VALUES
+
+-- Insert values into Employee table
+INSERT INTO Employee (EmployeeID, Name, IsAuthorized)
+VALUES
+(1, 'John Smith', TRUE),
+(2, 'Emily Johnson', TRUE),
+(3, 'Michael Brown', TRUE),
+(4, 'Jessica Williams', TRUE),
+(5, 'David Lee', TRUE);
+
+
+INSERT INTO Course (CourseNumber, Title, EmployeeId, ApprovedDate, Duration, Class)
+VALUES
+(101, 'DATABASE MANAGEMENT SYSTEM', 1, '2023-01-15', 5, 'DATABASE'),
+(102, 'NETWORKING FUNDAMENTALS', 2, '2023-02-20', 4, 'NETWORKING'),
+(103, 'PYTHON PROGRAMMING', 3, '2023-03-10', 6, 'PROGRAMMING'),
+(104, 'WEB DEVELOPMENT', 1, '2023-04-05', 7, 'WEB'),
+(105, 'DATA STRUCTURES AND ALGORITHMS', 2, '2023-05-15', 8, 'PROGRAMMING');
+
+
+-- Insert values into CourseOffering table
+INSERT INTO CourseOffering (CourseNumber, Location, StartDate, OfferingType)
+VALUES
+(101, 'Location A', '2023-06-01', 'GENOFFERING'),
+(102, 'Location B', '2023-07-10', 'GENOFFERING'),
+(103, 'Location C', '2023-08-20', 'GENOFFERING'),
+(104, 'Location D', '2023-09-05', 'GENOFFERING'),
+(105, 'Location E', '2023-10-15', 'GENOFFERING');
+
+
+-- Insert values into Participant table
+INSERT INTO Participant (ParticipantID, Name, Organization)
+VALUES
+(1, 'John Doe', 'Company X'),
+(2, 'Jane Smith', 'Company Y'),
+(3, 'Alice Johnson', 'Company Z'),
+(4, 'Bob Williams', 'Company X'),
+(5, 'Emily Brown', 'Company Y');
+
+
+-- Insert values into Enrollment table
+INSERT INTO Enrollment (EnrollmentID, ParticipantID, CourseNumber, Location, StartDate, OfferingType)
+VALUES
+(1, 1, 101, 'Location A', '2023-06-01', 'GENOFFERING'),
+(2, 2, 102, 'Location B', '2023-07-10', 'GENOFFERING'),
+(3, 3, 103, 'Location C', '2023-08-20', 'GENOFFERING'),
+(4, 4, 104, 'Location D', '2023-09-05', 'GENOFFERING'),
+(5, 5, 105, 'Location E', '2023-10-15', 'GENOFFERING');
+
+
+-- Insert values into FeeStructure table
+INSERT INTO FeeStructure (CourseNumber, OfferingType, StandardFee, SpecialFee)
+VALUES
+(101, 'GENOFFERING', 200.00, NULL),
+(102, 'GENOFFERING', 250.00, NULL),
+(103, 'GENOFFERING', 300.00, NULL),
+(104, 'GENOFFERING', 280.00, NULL),
+(105, 'GENOFFERING', 350.00, NULL);
+
+
+
+-- Insert values into Assignment table
+INSERT INTO Assignment (AssignmentID, EmployeeID, CourseNumber, Location, StartDate, OfferingType, DaysSpent)
+VALUES
+(1, 1, 101, 'Location A', '2023-06-01', 'GENOFFERING', 5),
+(2, 2, 102, 'Location B', '2023-07-10', 'GENOFFERING', 4),
+(3, 3, 103, 'Location C', '2023-08-20', 'GENOFFERING', 6),
+(4, 4, 104, 'Location D', '2023-09-05', 'GENOFFERING', 7),
+(5, 5, 105, 'Location E', '2023-10-15', 'GENOFFERING', 8);
+
+
+-- Insert values into Attendance table
+INSERT INTO Attendance (CourseNumber, ParticipantID, SessionDate, IsPresent)
+VALUES
+(101, 1, '2023-06-01', TRUE),
+(102, 2, '2023-07-10', TRUE),
+(103, 3, '2023-08-20', TRUE),
+(104, 4, '2023-09-05', TRUE),
+(105, 5, '2023-10-15', TRUE);
+
+
+-- Insert values into Evaluation table
+INSERT INTO Evaluation (ParticipantID, CourseNumber, Location, StartDate, Rating, Feedback)
+VALUES
+(1, 101, 'Location A', '2023-06-01', 4, 'Good course overall'),
+(2, 102, 'Location B', '2023-07-10', 5, 'Excellent instructor!'),
+(3, 103, 'Location C', '2023-08-20', 4, 'Great learning experience'),
+(4, 104, 'Location D', '2023-09-05', 3, 'Could be more hands-on'),
+(5, 105, 'Location E', '2023-10-15', 5, 'Best course ever!');
+
+
+
+
+SCHEMA:
+Course
+------
+CourseNumber (PK) --> CourseOffering
+Title
+EmployeeId (FK) --> Employee
+ApprovedDate
+Duration
+Class
+
+CourseOffering
+---------------
+CourseNumber (PK)
+Location (PK)
+StartDate (PK)
+OfferingType
+CourseNumber (FK) --> Course
+
+Participant
+-----------
+ParticipantID (PK)
+Name
+Organization
+
+Enrollment
+----------
+EnrollmentID (PK)
+ParticipantID (FK) --> Participant
+CourseNumber (FK) --> CourseOffering
+Location (FK)
+StartDate (FK)
+OfferingType (FK)
+
+FeeStructure
+------------
+CourseNumber (PK, FK) --> Course
+OfferingType (PK)
+StandardFee
+SpecialFee
+
+Employee
+--------
+EmployeeID (PK)
+Name
+IsAuthorized
+
+Assignment
+----------
+AssignmentID (PK)
+EmployeeID (FK) --> Employee
+CourseNumber (FK) --> CourseOffering
+Location (FK)
+StartDate (FK)
+OfferingType (FK)
+DaysSpent
+
+Attendance
+----------
+CourseNumber (FK) --> CourseOffering
+ParticipantID (FK) --> Participant
+SessionDate (FK)
+IsPresent
+
+Evaluation
+----------
+ParticipantID (FK) --> Participant
+CourseNumber (FK) --> CourseOffering
+Location (FK)
+StartDate (FK)
+Rating
+Feedback
